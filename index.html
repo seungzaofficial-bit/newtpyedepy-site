@@ -4,6 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>NEWTYPE DEPT.</title>
+<script>
+/* 방문 추적. ID를 넣기 전에는 아무것도 불러오지 않는다.
+   META_PIXEL = 메타 이벤트 관리자의 픽셀 ID, GA4 = 구글 애널리틱스 측정 ID (G-로 시작) */
+(function(){
+  var META_PIXEL="", GA4="";
+  window.ntdTrack=function(){};
+  if(META_PIXEL){
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init',META_PIXEL);fbq('track','PageView');
+  }
+  if(GA4){
+    var g=document.createElement('script');g.async=true;g.src='https://www.googletagmanager.com/gtag/js?id='+GA4;document.head.appendChild(g);
+    window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};
+    gtag('js',new Date());gtag('config',GA4);
+  }
+  /* 연락하려는 행동(이메일 복사 · 스레드 이동)을 전환으로 남긴다 */
+  window.ntdTrack=function(how){
+    if(META_PIXEL&&window.fbq)fbq('track','Contact',{method:how});
+    if(GA4&&window.gtag)gtag('event','contact',{method:how});
+  };
+  /* 한 페이지 안에서 #about 같은 화면 이동도 페이지 보기로 센다 */
+  addEventListener('hashchange',function(){
+    if(GA4&&window.gtag)gtag('event','page_view',{page_location:location.href,page_title:document.title+' '+location.hash});
+  });
+  document.addEventListener('click',function(e){
+    var el=e.target.closest&&e.target.closest('#c-threads,.cp');
+    if(!el)return;
+    window.ntdTrack(el.id==='c-threads'?'threads':(el.getAttribute('data-t')==='c-email'?'email_copy':'threads_copy'));
+  });
+})();
+</script>
 <style>
 @font-face{font-family:"Pretendard Variable";src:url("fonts/PretendardVariable.woff2") format("woff2-variations"),url("fonts/PretendardVariable.woff2") format("woff2");font-weight:45 920;font-style:normal;font-display:swap}
 /* VOICE: 브랜드를 직접 굴려본 운영자의 자신감. 짧고 세게.
